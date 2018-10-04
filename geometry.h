@@ -38,23 +38,107 @@ Vector cross(const Vector& v0, const Vector& v1)
 	return v_res;
 }
 
+template <typename Vector>
+double dot(const Vector& v0, const Vector& v1)
+{
+  return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
+}
+
+
 template <typename Point>
 class Triangle
 {
+  using Vector = Vector3D;
+
 public:
 	Triangle(Point& p0, Point& p1, Point& p2) : p0(p0), p1(p1), p2(p2) {}
 
+  // area = |n x n| / 2
 	double area()
 	{
 		// cross two vectors, starting at p0
-		Vector3D v0{p0, p1};
-		Vector3D v1{p0, p2};
-		Vector3D cp = cross(v0, v1);
+		Vector v0{p0, p1};
+		Vector v1{p0, p2};
+		Vector cp = cross(v0, v1);
 		return cp.norm() / 2;
 	}
+
+  Vector normal()
+  {
+    Vector v0{p0, p1};
+    Vector v1{p0, p2};
+    return cross(v0, v1);
+  }
+
+  Point& a() {return p0;}
+  Point& b() {return p1;}
+  Point& c() {return p2;}
 
 private:
 	Point p0;
 	Point p1;
 	Point p2;
 };
+
+template <typename Point>
+class Barycenter
+{
+  using Vector = Vector3D;
+
+public:
+  Barycenter(Triangle<Point>& t, Point& R) : t(t), R(R) {}
+
+  // for testing
+  void get_areas(double& sa, double& sb, double& sc)
+  {
+    Vector va{R, t.a()};
+    Vector vb{R, t.b()};
+    Vector vc{R, t.c()};
+    Vector n1 = cross(va, vb);
+    Vector n2 = cross(vb, vc);
+    Vector n3 = cross(vc, va);
+
+    sa = n1.norm() / 2.0;
+    sb = n2.norm() / 2.0;
+    sc = n3.norm() / 2.0;
+  }
+
+  void print_coords()
+  {
+    double u, v, w;
+    calculate_coords(u, v, w);
+    std::cout << "u= " << u << "v= " << v << " w= " << w << std::endl;
+  }
+
+private:
+  void calculate_signed_areas(double& rab, double& rbc, double& rca)
+  {
+    Vector va{R, t.a()};
+    Vector vb{R, t.b()};
+    Vector vc{R, t.c()};
+    rab = dot(t.normal(), cross(va, vb));
+    rbc = dot(t.normal(), cross(vb, vc));
+    rca = dot(t.normal(), cross(vc, va));
+  }
+
+  void calculate_coords(double& u, double& v, double& w)
+  {
+    double sa, sb, sc;
+    calculate_signed_areas(sa, sb, sc);
+    double abc = sa + sb + sc;
+    u = sa / abc;
+    v = sb / abc;
+    w = sc / abc;
+  }
+
+
+private:
+  Triangle<Point> t;
+  Point R;
+};
+
+
+
+
+
+
