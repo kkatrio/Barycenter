@@ -1,4 +1,10 @@
+
+#ifndef GEOMETRY
+#define GEOMETRY
+
 #include <math.h>
+#include <iostream>
+
 
 struct Point3D
 {
@@ -24,6 +30,7 @@ struct Vector3D
 
 	bool operator==(const Vector3D v)
 	{
+    // to fix
 		return (v.x == x && v.y == y && v.z == z) ? true : false;
 	}
 };
@@ -70,6 +77,7 @@ public:
     return cross(v0, v1);
   }
 
+  // static
   Point& a() {return p0;}
   Point& b() {return p1;}
   Point& c() {return p2;}
@@ -110,6 +118,30 @@ public:
     std::cout << "u= " << u << "v= " << v << " w= " << w << std::endl;
   }
 
+  // todo: barycentric coords as class data
+
+  double pab()
+  {
+    Vector va{R, t.a()};
+    Vector vb{R, t.b()};
+    return dot(t.normal(), cross(va, vb));
+  }
+
+  double pbc()
+  {
+    Vector vb{R, t.b()};
+    Vector vc{R, t.c()};
+    return dot(t.normal(), cross(vb, vc));
+  }
+
+  double pca()
+  {
+    Vector va{R, t.a()};
+    Vector vc{R, t.c()};
+    return dot(t.normal(), cross(vc, va));
+  }
+
+
 private:
   void calculate_signed_areas(double& rab, double& rbc, double& rca)
   {
@@ -142,3 +174,4 @@ private:
 
 
 
+#endif //GEOMETRY

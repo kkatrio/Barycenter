@@ -1,6 +1,9 @@
+#include "geometry.h"
+#include "closest_point.h"
+
 #include <assert.h>
 #include <iostream>
-#include "geometry.h"
+
 
 void test_cross_product()
 {
@@ -22,6 +25,7 @@ void test_dot_product()
   using Vector = Vector3D;
   Vector a{2, 0, 0};
   Vector b{2, 3, 2};
+  // to fix
   assert(dot(a, b) == 4);
 } 
 
@@ -73,6 +77,17 @@ void test_coords()
   brc.print_coords(); 
 }
 
+void test_closest_point()
+{
+  using Point = Point3D;
+  Point a{0, 0, 0};
+  Point b{2, 0, 0};
+  Point c{2, 3, 0};
+  Triangle<Point> t{a, b, c};
+  Point p{1.5, 1.5, 0};
+  closest_point_on_triangle(p, t);
+}
+
 int main()
 {
   test_cross_product();
@@ -80,6 +95,7 @@ int main()
   test_dot_product();
   test_signed_areas();
   test_coords();
+  test_closest_point();
 
   return 0;
 }
