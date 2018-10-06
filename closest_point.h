@@ -1,4 +1,3 @@
-
 #ifndef CLOSEST_POINT
 #define CLOSEST_POINT
 

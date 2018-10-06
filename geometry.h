@@ -1,4 +1,3 @@
-
 #ifndef GEOMETRY
 #define GEOMETRY
 
