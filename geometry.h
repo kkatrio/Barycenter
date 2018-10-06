@@ -115,7 +115,7 @@ public:
   {
     double u, v, w;
     calculate_coords(u, v, w);
-    std::cout << "u= " << u << "v= " << v << " w= " << w << std::endl;
+    std::cout << "u= " << u << " v= " << v << " w= " << w << std::endl;
   }
 
   // todo: barycentric coords as class data

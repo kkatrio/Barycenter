@@ -4,6 +4,20 @@
 #include <assert.h>
 #include <iostream>
 
+bool almost_equal(double a, double b)
+{
+  double eps = 1e-15;
+  return (a < b + eps && a > b - eps) ? true : false;
+}
+
+template <typename Vector>
+bool almost_equal(Vector a, Vector b)
+{
+  const double eps = 1e-15;
+  return (a.x < b.x + eps && a.x > b.x - eps) &&
+         (a.y < b.y + eps && a.y > b.y - eps) &&
+         (a.z < b.z + eps && a.z > b.z - eps) ? true : false;
+}
 
 void test_cross_product()
 {
@@ -17,7 +31,7 @@ void test_cross_product()
   Vector cp = cross(v0, v1);
 
   Vector v{0, -4, 6};
-  assert(cp == v);
+  assert(almost_equal(cp, v));
 }
 
 void test_dot_product()
@@ -26,7 +40,7 @@ void test_dot_product()
   Vector a{2, 0, 0};
   Vector b{2, 3, 2};
   // to fix
-  assert(dot(a, b) == 4);
+  assert(almost_equal(dot(a, b), 4));
 } 
 
 void test_area()
@@ -37,13 +51,7 @@ void test_area()
   Point c{2, 3, 0};
 
   Triangle<Point> t{a, b, c};
-  assert(t.area() == 3.0);
-}
-
-bool almost_equal(double a, double b)
-{ 
-  double eps = 1e-10;
-  return (a < b + eps && a > b - eps) ? true : false;
+  assert(almost_equal(t.area(), 3.0));
 }
 
 void test_signed_areas()
@@ -77,17 +85,6 @@ void test_coords()
   brc.print_coords(); 
 }
 
-void test_closest_point()
-{
-  using Point = Point3D;
-  Point a{0, 0, 0};
-  Point b{2, 0, 0};
-  Point c{2, 3, 0};
-  Triangle<Point> t{a, b, c};
-  Point p{1.5, 1.5, 0};
-  closest_point_on_triangle(p, t);
-}
-
 int main()
 {
   test_cross_product();
@@ -95,7 +92,6 @@ int main()
   test_dot_product();
   test_signed_areas();
   test_coords();
-  test_closest_point();
 
   return 0;
 }
