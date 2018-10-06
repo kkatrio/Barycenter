@@ -10,8 +10,8 @@ bool almost_equal(double a, double b)
   return (a < b + eps && a > b - eps) ? true : false;
 }
 
-template <typename Vector>
-bool almost_equal(Vector a, Vector b)
+template <typename T>
+bool almost_equal(T a, T b)
 {
   const double eps = 1e-15;
   return (a.x < b.x + eps && a.x > b.x - eps) &&
@@ -68,8 +68,6 @@ void test_signed_areas()
   Barycenter<Point> brc{t, R};
   double sa, sb, sc;
   brc.get_areas(sa, sb, sc);
-
-  std::cout << sa + sb + sc << " " << t.area() << std::endl;
   assert(almost_equal(sa + sb + sc, t.area()));
 }
 
@@ -82,7 +80,17 @@ void test_coords()
   Triangle<Point> t{a, b, c};
   Point R{1.5, 1.5, 0};
   Barycenter<Point> brc{t, R};
-  brc.print_coords(); 
+  brc.print_coords(); // to imrpove API
+}
+
+void test_projection()
+{
+  Point3D A{0, 0, 0};
+  Point3D B{2, 0, 0};
+  Point3D p{1, 0, 0};
+  Vector3D ab{A, B};
+  Point3D pt = projected_point(p, ab);
+  assert(almost_equal(pt, {1, 0, 0}));
 }
 
 int main()
@@ -92,6 +100,7 @@ int main()
   test_dot_product();
   test_signed_areas();
   test_coords();
+  test_projection();
 
   return 0;
 }

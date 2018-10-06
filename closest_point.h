@@ -8,7 +8,7 @@
 
 
 
-bool is_on_AC_feature_region(Point3D& p, Triangle<Point3D>& t)
+bool is_on_CA_feature_region(Point3D& p, Triangle<Point3D>& t)
 {
   using Vector = Vector3D;
   Vector CP{t.c(), p};
@@ -72,26 +72,27 @@ bool is_on_C_voronoi_region(Point3D& p, Triangle<Point3D>& t)
 }
 
 
-void closest_point_on_triangle(Point3D& p, Triangle<Point3D>& t)
+template <typename Point>
+Point closest_point_on_triangle(Point& p, Triangle<Point>& t)
 {
   // check if in vertex voronoi region
 
   if(is_on_A_voronoi_region(p, t))
   {
     std::cout << "region A\n";
-    return;
+    return t.a();
   }
 
   if(is_on_B_voronoi_region(p, t))
   {
     std::cout << "region B\n";
-    return;
+    return t.b();
   }
 
   if(is_on_C_voronoi_region(p, t))
   {
     std::cout << "region C\n";
-    return;
+    return t.c();
   }
 
   // check if outside edge and in edge feature regions
@@ -100,27 +101,32 @@ void closest_point_on_triangle(Point3D& p, Triangle<Point3D>& t)
   if(barc.pab() < 0 && is_on_AB_feature_region(p, t))
   {
     std::cout << "outside AB edge\n";
-    return;
+    Vector3D AB{t.a(), t.b()};
+    return projected_point(p, AB);
   }
 
   if(barc.pbc() < 0 && is_on_BC_feature_region(p, t))
   {
     std::cout << "outside BC edge\n";
-    return;
+    Vector3D BC{t.b(), t.c()};
+    return projected_point(p, BC);
   }
 
-  if(barc.pca() < 0 && is_on_AC_feature_region(p, t))
+  if(barc.pca() < 0 && is_on_CA_feature_region(p, t))
   {
-    std::cout << "outside AC edge\n";
-    return;
+    std::cout << "outside CA edge\n";
+    Vector3D CA{t.c(), t.a()};
+    return projected_point(p, CA);
   }
 
 
   // must be inside
   barc.print_coords();
-
+  return {}; // 0,0,0
 
 }
+
+
 
 
 #endif // CLOSEST_POINT
